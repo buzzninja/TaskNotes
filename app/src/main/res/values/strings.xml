@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TaskNotes</string>
+    <string name="buttonAddNoteDesc">Добавление заметки</string>
 </resources>
