@@ -1,10 +1,4 @@
 <resources>
     <string name="app_name">TaskNotes</string>
     <string name="buttonAddNoteDesc">Добавление заметки</string>
-    <string name="addTaskHint">Enter task name</string>
-    <string name="buttonAddTaskText">Save task</string>
-    <string name="radioButtonLowText">Low Priority</string>
-    <string name="radioButtonMediumText">Medium Priority</string>
-    <string name="radioButtonHighText">High Priority</string>
-    <string name="toastEmptyTask">Enter task</string>
 </resources>
