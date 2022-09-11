@@ -20,6 +20,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
     private Button buttonAddTask;
 
+    private Database database =Database.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +31,7 @@ public class AddTaskActivity extends AppCompatActivity {
         buttonAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+            saveNote();
             }
         });
     }
@@ -49,9 +51,14 @@ public class AddTaskActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),R.string.toastEmptyTask, Toast.LENGTH_SHORT).show();
         } else {
             int priority=getPriority();
+            int id = database.getNotes().size();
+            Note note = new Note(id,taskText, priority);
+            database.add(note);
+
+            finish();
                     }
     }
-//Определение приоритета по нажатой кнопке
+//Определение приоритета по нажатой радио кнопке
     private int getPriority(){
         int priority;
         if (radioButtonHighPriority.isChecked()) {
