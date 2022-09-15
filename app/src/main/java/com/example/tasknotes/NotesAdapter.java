@@ -14,10 +14,16 @@ import java.util.ArrayList;
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 
     private ArrayList<Note> notes = new ArrayList<>();
+    private OnNoteClickListener onNoteClickListener;
+
 
     public void setNotes(ArrayList<Note> notes) {
         this.notes = notes;
         notifyDataSetChanged();
+    }
+
+    public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
+        this.onNoteClickListener = onNoteClickListener;
     }
 
     @NonNull
@@ -39,20 +45,31 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         viewHolder.textViewNote.setText(note.getText());
         //установка цвета заметки
         int colorResId;
-        switch (note.getPriority()){
+        switch (note.getPriority()) {
             case 0:
-                colorResId= android.R.color.holo_green_light;
+                colorResId = android.R.color.holo_green_light;
                 break;
             case 1:
-                colorResId= android.R.color.holo_orange_light;
+                colorResId = android.R.color.holo_orange_light;
                 break;
             default:
-                colorResId= android.R.color.holo_red_light;
+                colorResId = android.R.color.holo_red_light;
                 break;
 
         }
-        int color = ContextCompat.getColor(viewHolder.itemView.getContext(),colorResId);
+        int color = ContextCompat.getColor(viewHolder.itemView.getContext(), colorResId);
         viewHolder.textViewNote.setBackgroundColor(color);
+
+        //Слушатель Клика
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onNoteClickListener != null) {
+                    onNoteClickListener.onNoteClick(note);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -66,7 +83,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewNote =itemView.findViewById(R.id.textViewNote);
+            textViewNote = itemView.findViewById(R.id.textViewNote);
         }
+    }
+
+    //interface для Слушателя Клика
+    interface OnNoteClickListener {
+        void onNoteClick(Note note);
     }
 }
