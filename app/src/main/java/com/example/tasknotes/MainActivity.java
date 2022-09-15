@@ -2,6 +2,7 @@ package com.example.tasknotes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +17,10 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LinearLayout linearLayoutNotes;
+    private RecyclerView recyclerViewNotes;
+    private NotesAdapter notesAdapter;
     private FloatingActionButton buttonAddNote;
+
 
     private Database database = Database.getInstance();
 
@@ -26,8 +29,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
+        notesAdapter = new NotesAdapter();
+        recyclerViewNotes.setAdapter(notesAdapter);
 
 
+        //Переход на AddTasActivity
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -44,47 +51,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews(){
-        linearLayoutNotes = findViewById(R.id.linearLayoutNotes);
         buttonAddNote = findViewById(R.id.buttonAddNote);
+        recyclerViewNotes=findViewById(R.id.recyclerViewNotes);
     }
 
     private void showNotes(){
-        linearLayoutNotes.removeAllViews();
-        for (Note note:database.getNotes()){
-            View view= getLayoutInflater().inflate(
-                    R.layout.note_item,
-                    linearLayoutNotes,
-                    false
-            );
-            //удаление на нажатие
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    database.remove(note.getId());
-                    showNotes();
-                }
-            });
-            //установка текста заметки
-            TextView textViewNotes = view.findViewById(R.id.textViewNote);
-            textViewNotes.setText(note.getText());
-            //установка цвета заметки
-            int colorResId;
-            switch (note.getPriority()){
-                case 0:
-                    colorResId= android.R.color.holo_green_light;
-                    break;
-                case 1:
-                    colorResId= android.R.color.holo_orange_light;
-                    break;
-                default:
-                    colorResId= android.R.color.holo_red_light;
-                    break;
-
-            }
-            int color = ContextCompat.getColor(this,colorResId);
-            textViewNotes.setBackgroundColor(color);
-            //добавление заметок
-            linearLayoutNotes.addView(view);
-        }
+        notesAdapter.setNotes(database.getNotes());
     }
 }
