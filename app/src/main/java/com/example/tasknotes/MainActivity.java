@@ -1,7 +1,9 @@
 package com.example.tasknotes;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -30,16 +32,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initViews();
         notesAdapter = new NotesAdapter();
-        //слушатель клика
-        notesAdapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
+
+        recyclerViewNotes.setAdapter(notesAdapter);
+        //удаление свайпом
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
-            public void onNoteClick(Note note) {
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target
+            ) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                Note note = notesAdapter.getNotes().get(position);
                 database.remove(note.getId());
                 showNotes();
             }
         });
-
-        recyclerViewNotes.setAdapter(notesAdapter);
+        itemTouchHelper.attachToRecyclerView(recyclerViewNotes);
 
 
         //Переход на AddTasActivity
@@ -59,12 +74,12 @@ public class MainActivity extends AppCompatActivity {
         showNotes();
     }
 
-    private void initViews(){
+    private void initViews() {
         buttonAddNote = findViewById(R.id.buttonAddNote);
-        recyclerViewNotes=findViewById(R.id.recyclerViewNotes);
+        recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
     }
 
-    private void showNotes(){
+    private void showNotes() {
         notesAdapter.setNotes(database.getNotes());
     }
 }
