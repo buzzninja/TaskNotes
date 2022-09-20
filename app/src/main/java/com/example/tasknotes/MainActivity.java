@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton buttonAddNote;
 
 
-    private Database database = Database.getInstance();
+    private NoteDatabase noteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initViews();
         notesAdapter = new NotesAdapter();
+        noteDatabase = NoteDatabase.getInstance(getApplication());
 
         recyclerViewNotes.setAdapter(notesAdapter);
         //удаление свайпом
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 Note note = notesAdapter.getNotes().get(position);
-                database.remove(note.getId());
+                noteDatabase.notesDao().remove(note.getId());
                 showNotes();
             }
         });
@@ -80,6 +81,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showNotes() {
-        notesAdapter.setNotes(database.getNotes());
+        notesAdapter.setNotes(noteDatabase.notesDao().getNotes());
     }
 }
